@@ -1,0 +1,14 @@
+# Ignore Node.js generated folders
+node_modules/
+dist/
+
+# Ignore environment-specific files
+.env
+
+# Ignore IDE/Editor specific files and folders
+.vscode/
+.idea/
+*.iml
+
+# Ignore macOS specific files
+.DS_Store
