@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "ts-node src/app.ts",
+    "mint:erc20": "ts-node src/scripts/mintERC20.ts",
+    "mint:erc721": "ts-node src/scripts/mintERC721.ts",
     "test": "jest",
     "lint": "eslint . --ext .ts",
     "format": "prettier --write \"src/**/*.ts\""
