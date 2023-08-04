@@ -57,3 +57,10 @@ jobs:
 
       - name: Linting code
         run: npm run test
+        env:
+          SEPOLIA_RPC_URL: 'https://rpc.sepolia.dev'
+          SEPOLIA_MARKETPLACE_ADDRESS: '0x597c9bc3f00a4df00f85e9334628f6cdf03a1184'
+          ERC20_TOKEN_ADDRESS: '0xbd65c58D6F46d5c682Bf2f36306D461e3561C747'
+          ERC721_TOKEN_ADDRESS: '0xFCE9b92eC11680898c7FE57C4dDCea83AeabA3ff'
+          BUYER_PRIVATE_KEY: '0xabc461640d0190f95e79aabb0eb782db801aed182d4d01d8ccab3e5f9193bbc7'
+          SELLER_PRIVATE_KEY: '0x72e02d80020f79c66cd4b5c8313403cc6455f83206592a77870a397f8b4009e1'
