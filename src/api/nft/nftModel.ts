@@ -1,5 +1,4 @@
 export interface NFTData {
-  collectionAddress: string;
   ownerAddress: string;
   tokenId: number;
   name: string;
@@ -9,7 +8,6 @@ export interface NFTData {
     minimumBid?: number;
     highestBid?: number;
     highestBidder?: string;
-    erc20Address?: string;
     bidderSig?: string;
     endDate?: string;
     status: 'active' | 'sold' | 'expired'; // 'active', 'sold', 'expired', etc.
@@ -18,6 +16,8 @@ export interface NFTData {
 }
 
 const nfts: NFTData[] = [];
+
+type NFTDataWithoutOwnerBidder = Omit<NFTData, 'ownerAddress' | 'auction.highestBidder'>;
 
 export function addNFT(nft: NFTData): void {
   if (nft.type === 'auction' && nft.auction) {
@@ -29,4 +29,20 @@ export function addNFT(nft: NFTData): void {
 
 export function getNFTs(): NFTData[] {
   return nfts;
+}
+
+export function getNFTsPublic(): NFTDataWithoutOwnerBidder[] {
+  const filteredNFTArray: NFTDataWithoutOwnerBidder[] = nfts.map(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    ({ ownerAddress, auction, ...rest }) => {
+      const auctionWithoutHighestBidder = auction ? { ...auction } : undefined;
+      delete auctionWithoutHighestBidder?.highestBidder;
+
+      return {
+        ...rest,
+        auction: auctionWithoutHighestBidder,
+      };
+    },
+  );
+  return filteredNFTArray;
 }

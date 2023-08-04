@@ -7,7 +7,6 @@ describe('NFT Model', () => {
   beforeEach(() => {
     nftFixed = {
       ownerAddress: '0xFCE9b92eC11680898c7FE57C4dDCea83AeabA3fd',
-      collectionAddress: '0xFCE9b92eC11680898c7FE57C4dDCea83AeabA3ff',
       tokenId: 123,
       name: 'My NFT',
       type: 'fixed',
@@ -18,18 +17,16 @@ describe('NFT Model', () => {
 
     nftAuction = {
       ownerAddress: '0xFCE9b92eC11680898c7FE57C4dDCea83AeabA3fd',
-      collectionAddress: '0xFCE9b92eC11680898c7FE57C4dDCea83AeabA3ff',
       tokenId: 456,
       name: 'Another NFT',
       type: 'auction',
       price: undefined,
       auction: {
-        minimumBid: 500000000000000000,
+        minimumBid: 5000,
         endDate: '2023-12-31T23:59:59Z',
-        highestBid: 600000000000000000,
-        highestBidder: '0x123456...',
-        erc20Address: '0x123456...',
-        bidderSig: '0xabcdef...',
+        highestBid: 6000,
+        highestBidder: '0xFCE9b92eC11680898c7FE57C4dDCea83AeabA3fd',
+        bidderSig: '0xFCE9b92eC11680898c7FE57C4dDCea83AeabA3fd',
         status: 'active',
       },
       createdAt: new Date(),

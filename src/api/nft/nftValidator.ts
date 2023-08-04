@@ -1,7 +1,6 @@
 import Joi from 'joi';
 
 export const nftDataSchema = Joi.object({
-  collectionAddress: Joi.string().required(),
   ownerAddress: Joi.string().required(),
   tokenId: Joi.number().integer().required(),
   name: Joi.string().required(),

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { addNFT, getNFTs, NFTData } from './nftModel';
+import { addNFT, getNFTsPublic, NFTData } from './nftModel';
 import { nftDataSchema } from './nftValidator';
 
 export function listNFT(req: Request, res: Response): void {
@@ -22,7 +22,7 @@ export function listNFT(req: Request, res: Response): void {
 
 export function getNFTList(req: Request, res: Response): void {
   try {
-    const nfts = getNFTs();
+    const nfts = getNFTsPublic();
     res.status(200).json(nfts);
   } catch (err) {
     console.error(err);
