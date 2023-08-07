@@ -8,7 +8,11 @@ Simple node backend server that stores an in-memory list of listings, and serves
 
 [Settler Contract](https://sepolia.etherscan.io/address/0x597c9bc3f00a4df00f85e9334628f6cdf03a1184#code)\
 [MockERC20](https://sepolia.etherscan.io/address/0xbd65c58d6f46d5c682bf2f36306d461e3561c747#code)\
-[MockERC721](https://sepolia.etherscan.io/address/0xfce9b92ec11680898c7fe57c4ddcea83aeaba3ff#code)
+[MockERC721](https://sepolia.etherscan.io/address/0xfce9b92ec11680898c7fe57c4ddcea83aeaba3ff#code)\
+
+### Api Documentation
+
+[Postman](https://www.postman.com/bold-meadow-931500/workspace/cheap-nft-marketplace/collection/6131394-74805c9b-ee7e-4dbf-a8be-2c14d5d2ad45?action=share&creator=6131394)
 
 ## Getting Started
 
