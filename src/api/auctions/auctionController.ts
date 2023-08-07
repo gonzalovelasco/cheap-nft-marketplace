@@ -20,7 +20,11 @@ export async function placeBidOnAuctionOrPurchase(req: Request, res: Response): 
     }
 
     if (listing.type === 'auction') {
-      if (!listing.auction?.highestBid || bidAmount <= listing.auction.highestBid) {
+      if (
+        !listing.auction?.highestBid ||
+        bidAmount <= listing.auction.highestBid ||
+        listing.auction.status !== 'active'
+      ) {
         res.status(400).json({ error: 'Invalid bid amount.' });
         return;
       }
@@ -62,6 +66,12 @@ export async function finishAuctionController(req: Request, res: Response) {
       res.status(400).json({ error: 'Only the owner can finish the auction.' });
       return;
     }
+    if (
+      listing?.type !== 'auction' ||
+      !listing?.auction ||
+      !listing.auction?.highestBidder ||
+      listing?.auction.status !== 'active'
+    ) {
       res.status(400).json({ error: 'No valid bids on the auction.' });
       return;
     }
