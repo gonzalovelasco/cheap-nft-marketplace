@@ -62,7 +62,7 @@ List a new NFT.
   - **Status:** 400 Bad Request
   - **Body:** `{ error: 'Failed to list NFT.' }`
 
-## GET /api/nft/list
+## GET /api/nft
 
 Retrieve a list of public NFTs.
 
