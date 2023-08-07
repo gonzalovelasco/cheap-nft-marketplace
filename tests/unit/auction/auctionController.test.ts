@@ -47,6 +47,8 @@ describe('Auction Controller', () => {
           type: 'auction',
           auction: {
             highestBid: 90,
+            minimumBid: 90,
+            status: 'active',
           },
         },
       ];
@@ -89,7 +91,7 @@ describe('Auction Controller', () => {
         {
           tokenId: 123,
           type: 'invalidType',
-          ownerAddress: '0xowner',
+          ownerAddress: '0xabc123',
         },
       ];
 
@@ -132,7 +134,7 @@ describe('Auction Controller', () => {
     });
 
     it('should finish the auction and respond with success', async () => {
-      req.body = { tokenId: 123 };
+      req.body = { tokenId: 123, address: '0xabc123' };
 
       const mockListings = [
         {
@@ -143,6 +145,7 @@ describe('Auction Controller', () => {
             highestBid: 90,
             highestBidder: '0xabc124',
             bidderSig: '0xabc124',
+            status: 'active',
           },
         },
       ];
@@ -160,7 +163,8 @@ describe('Auction Controller', () => {
     });
 
     it('should handle errors and respond with an error message', async () => {
-      req.body = { tokenId: 123 };
+      req.body = { tokenId: 123, address: '0xabc123' };
+
       (completeAuction as jest.Mock).mockRejectedValueOnce(new Error('An error occurred'));
       const mockListings = [
         {
@@ -171,6 +175,7 @@ describe('Auction Controller', () => {
             highestBid: 90,
             highestBidder: '0xabc124',
             bidderSig: '0xabc124',
+            status: 'active',
           },
         },
       ];
