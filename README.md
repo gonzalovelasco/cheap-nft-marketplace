@@ -28,15 +28,15 @@ Simple node backend server that stores an in-memory list of listings, and serves
 1. Check that the variable `SELLER_PRIVATE_KEY` is set
 2. Run project: `npm run mint:erc721`.
 
-# NFT API Endpoints Documentation
+## NFT API Endpoints Documentation
 
 This documentation outlines the endpoints available in the NFT API module.
 
-## POST /api/nft
+### POST /api/nft
 
 List a new NFT.
 
-### Request
+#### Request
 
 - **Method:** `POST`
 - **Path:** `/api/nft`
@@ -50,7 +50,7 @@ List a new NFT.
     - `minimumBid` (number, required): Minimum bid amount for the auction.
     - `endDate` (string, required): End date of the auction in ISO 8601 format.
 
-### Response
+#### Response
 
 - **Success Response:**
 
@@ -61,16 +61,16 @@ List a new NFT.
   - **Status:** 400 Bad Request
   - **Body:** `{ error: 'Failed to list NFT.' }`
 
-## GET /api/nft
+### GET /api/nft
 
 Retrieve a list of public NFTs.
 
-### Request
+#### Request
 
 - **Method:** `GET`
 - **Path:** `/api/nft`
 
-### Response
+#### Response
 
 - **Success Response:**
 
@@ -81,15 +81,15 @@ Retrieve a list of public NFTs.
   - **Status:** 500 Internal Server Error
   - **Body:** `{ error: 'Failed to fetch NFT list.' }`
 
-# Place Bid on Auction or Purchase API Endpoint
+## Place Bid on Auction or Purchase API Endpoint
 
 This endpoint allows you to place a bid on an ongoing auction or make a purchase for an NFT.
 
-## POST /api/auction/bidOrPurchase
+### POST /api/auction/bidOrPurchase
 
 Place a bid on an ongoing auction or make a purchase for an NFT.
 
-### Request
+#### Request
 
 - **Method:** `POST`
 - **Path:** `/api/auction/bidOrPurchase`
@@ -98,7 +98,7 @@ Place a bid on an ongoing auction or make a purchase for an NFT.
   - `bidderAddress` (string, required): Address of the bidder.
   - `bidAmount` (number, required): Amount of the bid.
 
-### Response
+#### Response
 
 - **Success Response:**
 
@@ -114,22 +114,22 @@ Place a bid on an ongoing auction or make a purchase for an NFT.
   - **Status:** 500 Internal Server Error
     - **Body:** `{ error: 'Failed to place bid on the auction.' }`
 
-# Finish Auction API Endpoint
+## Finish Auction API Endpoint
 
 This endpoint allows you to finish an ongoing auction for an NFT.
 
-## POST /api/auction/finish
+### POST /api/auction/finish
 
 Finish an ongoing auction for an NFT.
 
-### Request
+#### Request
 
 - **Method:** `POST`
 - **Path:** `/api/auction/finish`
 - **Body Parameters:**
   - `tokenId` (integer, required): ID of the NFT token.
 
-### Response
+#### Response
 
 - **Success Response:**
 
