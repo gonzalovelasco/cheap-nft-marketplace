@@ -1,12 +1,7 @@
 import { Request, Response } from 'express';
 import { finishAuctionSchema, bidAuctionSchema } from './auctionValidator';
 import { getNFTs } from '../nft/nftModel';
-import {
-  finishAuction,
-  createMessageHash,
-  createSignature,
-  createBidderHash,
-} from '../../blockchain'; // Import the contract ABI
+import { completeAuction, generateSignatureForBidder, purchaseNFT } from './auctionService';
 
 export async function placeBidOnAuctionOrPurchase(req: Request, res: Response): Promise<void> {
   try {
@@ -32,40 +27,20 @@ export async function placeBidOnAuctionOrPurchase(req: Request, res: Response): 
 
       listing.auction.highestBid = bidAmount;
       listing.auction.highestBidder = bidderAddress;
-    }
-
-    const messageHash = createMessageHash({
-      tokenId,
-      erc20Address: process.env.ERC20_TOKEN_ADDRESS as string,
-      collectionAddress: process.env.ERC721_TOKEN_ADDRESS as string,
-      bid: bidAmount,
-    });
-
-    const signature = await createSignature({ messageHash, privateKey: bidderAddress });
-    if (listing.type === 'auction' && listing.auction) {
+      const signature = await generateSignatureForBidder(tokenId, bidderAddress, bidAmount);
       listing.auction.bidderSig = signature;
+      res.status(200).json({ message: 'Bid placed on the auction successfully.', signature });
     } else if (listing.type === 'fixed') {
-      const bidderHash = createBidderHash(signature);
-      const signatureOwner = await createSignature({
-        messageHash: bidderHash,
-        privateKey: listing.ownerAddress,
-      });
-      const auctionData = {
+      const transactionHash = await purchaseNFT(
         tokenId,
-        erc20Address: process.env.ERC20_TOKEN_ADDRESS as string,
-        collectionAddress: process.env.ERC721_TOKEN_ADDRESS as string,
-        bid: bidAmount,
-      };
-
-      await finishAuction(
-        auctionData,
-        signature,
-        signatureOwner,
         bidderAddress,
+        bidAmount,
         listing.ownerAddress,
       );
+      res.status(200).json({ message: 'NFT purchased.', transactionHash });
+    } else {
+      res.status(400).json({ error: 'Invalid listing type.' });
     }
-    res.status(200).json({ message: 'Bid placed on the auction successfully.' });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to place bid on the auction.' });
@@ -93,27 +68,15 @@ export async function finishAuctionController(req: Request, res: Response) {
       res.status(400).json({ error: 'No valid bids on the auction.' });
       return;
     }
-    const bidderHash = createBidderHash(bidderSig);
-    const signatureOwner = await createSignature({
-      messageHash: bidderHash,
-      privateKey: bidderHash,
-    });
-    const auctionData = {
+    const transactionHash = await completeAuction(
       tokenId,
-      erc20Address: process.env.ERC20_TOKEN_ADDRESS as string,
-      collectionAddress: process.env.ERC721_TOKEN_ADDRESS as string,
-      bid: highestBid,
-    };
-
-    await finishAuction(
-      auctionData,
       bidderSig,
-      signatureOwner,
+      highestBid,
       highestBidder,
       listing.ownerAddress,
     );
 
-    res.status(200).json({ message: 'Auction finished successfully.' });
+    res.status(200).json({ message: 'Auction finished successfully.', transactionHash });
   } catch (err) {
     console.error(err);
     res.status(400).json({ error: 'Failed to finish the auction.' });
