@@ -6,7 +6,6 @@ export const finishAuctionSchema = Joi.object({
 
 export const bidAuctionSchema = Joi.object({
   tokenId: Joi.number().required(),
-  bidder: Joi.string().required(),
-  erc20Address: Joi.string().required(),
+  bidderAddress: Joi.string().required(),
   bidAmount: Joi.number().integer().positive().required(),
 });
