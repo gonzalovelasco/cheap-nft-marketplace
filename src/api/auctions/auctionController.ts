@@ -29,6 +29,7 @@ export async function placeBidOnAuctionOrPurchase(req: Request, res: Response): 
       listing.auction.highestBidder = bidderAddress;
       const signature = await generateSignatureForBidder(tokenId, bidderAddress, bidAmount);
       listing.auction.bidderSig = signature;
+      listing.auction.status = 'active';
       res.status(200).json({ message: 'Bid placed on the auction successfully.', signature });
     } else if (listing.type === 'fixed') {
       const transactionHash = await purchaseNFT(
@@ -75,10 +76,10 @@ export async function finishAuctionController(req: Request, res: Response) {
       highestBidder,
       listing.ownerAddress,
     );
-
+    listing.auction.status = 'sold';
     res.status(200).json({ message: 'Auction finished successfully.', transactionHash });
   } catch (err) {
     console.error(err);
-    res.status(400).json({ error: 'Failed to finish the auction.' });
+    res.status(500).json({ error: 'Failed to finish the auction.' });
   }
 }
