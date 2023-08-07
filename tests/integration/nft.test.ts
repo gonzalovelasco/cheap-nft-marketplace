@@ -1,5 +1,9 @@
 import request from 'supertest';
-import app from '../../src/app'; // Replace with the path to your Express app file
+import app from '../../src/app';
+
+afterAll((done) => {
+  app.close(done);
+});
 
 describe('NFT Routes', () => {
   it('should list an NFT successfully with price fixed', async () => {
