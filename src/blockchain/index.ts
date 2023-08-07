@@ -8,8 +8,9 @@ dotenv.config();
 
 const ERC20_TOKEN_ADDRESS = process.env.ERC20_TOKEN_ADDRESS;
 const ERC721_TOKEN_ADDRESS = process.env.ERC721_TOKEN_ADDRESS;
+const SEPOLIA_MARKETPLACE_ADDRESS = process.env.SEPOLIA_MARKETPLACE_ADDRESS;
 const web3 = new Web3(process.env.SEPOLIA_RPC_URL);
-const methods = new web3.eth.Contract(marketplace, process.env.SEPOLIA_MARKETPLACE_ADDRESS).methods;
+const methods = new web3.eth.Contract(marketplace, SEPOLIA_MARKETPLACE_ADDRESS).methods;
 interface AuctionData {
   collectionAddress: string;
   erc20Address: string;
@@ -21,79 +22,95 @@ interface SignatureData {
   privateKey: string;
 }
 export async function approveERC20(amount: number, address: string): Promise<void> {
-  const contractInstance = new web3.eth.Contract(ERC20, ERC20_TOKEN_ADDRESS);
+  try {
+    const contractInstance = new web3.eth.Contract(ERC20, ERC20_TOKEN_ADDRESS);
 
-  const amountToMint = web3.utils.toWei(amount, 'ether');
-  const account = web3.eth.accounts.privateKeyToAccount(address);
+    const amountToApprove = web3.utils.toWei(amount, 'ether');
+    const account = web3.eth.accounts.privateKeyToAccount(address);
 
-  const recipientAddress = account.address;
-  const nonce = await web3.eth.getTransactionCount(recipientAddress);
-  const block = await web3.eth.getBlock('latest');
-  const gasLimit = Math.round(Number(block.gasLimit) / block.transactions.length);
-  const tx = {
-    nonce: nonce,
-    from: recipientAddress,
-    to: ERC20_TOKEN_ADDRESS,
-    gas: gasLimit,
-    gasPrice: await web3.eth.getGasPrice(),
-    data: contractInstance.methods.mint(recipientAddress, amountToMint).encodeABI(),
-  };
+    const recipientAddress = account.address;
+    const nonce = await web3.eth.getTransactionCount(recipientAddress);
+    const block = await web3.eth.getBlock('latest');
+    const gasLimit = Math.round(Number(block.gasLimit) / block.transactions.length);
+    const tx = {
+      nonce: nonce,
+      from: recipientAddress,
+      to: ERC20_TOKEN_ADDRESS,
+      gas: gasLimit,
+      gasPrice: await web3.eth.getGasPrice(),
+      data: contractInstance.methods
+        .approve(SEPOLIA_MARKETPLACE_ADDRESS as string, amountToApprove)
+        .encodeABI(),
+    };
 
-  const signedTx = await web3.eth.accounts.signTransaction(tx, account.privateKey);
-  await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+    const signedTx = await web3.eth.accounts.signTransaction(tx, account.privateKey);
+    await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+  } catch (err) {
+    console.error(err);
+    throw new Error('Failed to approve ERC20');
+  }
 }
 
 export async function approveERC721(tokenId: number, address: string): Promise<void> {
-  const contractInstance = new web3.eth.Contract(ERC721, ERC721_TOKEN_ADDRESS);
-  const account = web3.eth.accounts.privateKeyToAccount(address);
+  try {
+    const contractInstance = new web3.eth.Contract(ERC721, ERC721_TOKEN_ADDRESS);
+    const account = web3.eth.accounts.privateKeyToAccount(address);
 
-  const recipientAddress = account.address;
-  const nonce = await web3.eth.getTransactionCount(recipientAddress);
-  const block = await web3.eth.getBlock('latest');
-  const gasLimit = Math.round(Number(block.gasLimit) / block.transactions.length);
-  const tx = {
-    nonce: nonce,
-    from: recipientAddress,
-    to: ERC721_TOKEN_ADDRESS,
-    gas: gasLimit, // Adjust the gas value if needed
-    gasPrice: await web3.eth.getGasPrice(),
-    data: contractInstance.methods
-      .approve(process.env.SEPOLIA_MARKETPLACE_ADDRESS as string, tokenId)
-      .encodeABI(),
-  };
+    const recipientAddress = account.address;
+    const nonce = await web3.eth.getTransactionCount(recipientAddress);
+    const block = await web3.eth.getBlock('latest');
+    const gasLimit = Math.round(Number(block.gasLimit) / block.transactions.length);
+    const tx = {
+      nonce: nonce,
+      from: recipientAddress,
+      to: ERC721_TOKEN_ADDRESS,
+      gas: gasLimit, // Adjust the gas value if needed
+      gasPrice: await web3.eth.getGasPrice(),
+      data: contractInstance.methods
+        .approve(SEPOLIA_MARKETPLACE_ADDRESS as string, tokenId)
+        .encodeABI(),
+    };
 
-  const signedTx = await web3.eth.accounts.signTransaction(tx, account.privateKey);
-  await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+    const signedTx = await web3.eth.accounts.signTransaction(tx, account.privateKey);
+    await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+  } catch (err) {
+    console.error(err);
+    throw new Error('Failed to approve ERC721');
+  }
 }
 
 export async function finishAuction(
   auctionData: AuctionData,
   bidderSig: string,
   ownerApprovedSig: string,
-  ownerAddress: string,
   bidderAddress: string,
+  ownerAddress: string,
 ): Promise<string> {
   await approveERC20(auctionData.bid as number, bidderAddress);
   await approveERC721(auctionData.tokenId as number, ownerAddress);
+  try {
+    const account = web3.eth.accounts.privateKeyToAccount(ownerAddress);
+    const fromAddress = account.address;
+    const nonce = await web3.eth.getTransactionCount(fromAddress);
+    const block = await web3.eth.getBlock('latest');
+    const gasLimit = Math.round(Number(block.gasLimit) / block.transactions.length);
+    const methodData = methods.finishAuction(auctionData, bidderSig, ownerApprovedSig).encodeABI();
+    const tx = {
+      nonce: nonce,
+      to: SEPOLIA_MARKETPLACE_ADDRESS,
+      gas: gasLimit,
+      gasPrice: await web3.eth.getGasPrice(),
+      data: methodData,
+    };
 
-  const account = web3.eth.accounts.privateKeyToAccount(ownerAddress);
-  const fromAddress = account.address;
-  const nonce = await web3.eth.getTransactionCount(fromAddress);
-  const block = await web3.eth.getBlock('latest');
-  const gasLimit = Math.round(Number(block.gasLimit) / block.transactions.length);
-  const methodData = methods.finishAuction(auctionData, bidderSig, ownerApprovedSig).encodeABI();
-  const tx = {
-    nonce: nonce,
-    to: process.env.SEPOLIA_MARKETPLACE_ADDRESS,
-    gas: gasLimit,
-    gasPrice: await web3.eth.getGasPrice(),
-    data: methodData,
-  };
-
-  const signedTx = await web3.eth.accounts.signTransaction(tx, account.privateKey);
-  const txReceipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
-  const transactionHash = txReceipt.transactionHash.toString();
-  return transactionHash;
+    const signedTx = await web3.eth.accounts.signTransaction(tx, account.privateKey);
+    const txReceipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+    const transactionHash = txReceipt.transactionHash.toString();
+    return transactionHash;
+  } catch (err) {
+    console.error(err);
+    throw new Error('Failed to finish auction');
+  }
 }
 
 export function createMessageHash({
