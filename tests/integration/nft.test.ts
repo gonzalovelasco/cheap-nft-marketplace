@@ -15,7 +15,7 @@ describe('NFT Routes', () => {
       price: 100,
     };
 
-    const response = await request(app).post('/api/nfts').send(nftData);
+    const response = await request(app).post('/api/nft').send(nftData);
 
     expect(response.status).toBe(200);
     expect(response.body).toEqual({ message: 'NFT listed successfully.' });
@@ -33,14 +33,14 @@ describe('NFT Routes', () => {
       },
     };
 
-    const response = await request(app).post('/api/nfts').send(nftData);
+    const response = await request(app).post('/api/nft').send(nftData);
 
     expect(response.status).toBe(200);
     expect(response.body).toEqual({ message: 'NFT listed successfully.' });
   });
 
   it('should fetch the NFT list successfully', async () => {
-    const response = await request(app).get('/api/nfts');
+    const response = await request(app).get('/api/nft');
 
     expect(response.status).toBe(200);
     expect(Array.isArray(response.body)).toBe(true);

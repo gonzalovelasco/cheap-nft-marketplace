@@ -3,7 +3,7 @@ import { listNFT, getNFTList } from './nftController';
 
 const router = express.Router();
 
-router.post('/nfts', listNFT);
-router.get('/nfts', getNFTList);
+router.post('/nft', listNFT);
+router.get('/nft', getNFTList);
 
 export default router;

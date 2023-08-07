@@ -3,7 +3,7 @@ import { finishAuctionController, placeBidOnAuctionOrPurchase } from './auctionC
 
 const router = express.Router();
 
-router.post('/auctions/bid', placeBidOnAuctionOrPurchase);
-router.post('/auctions/finish', finishAuctionController);
+router.post('/auction/bidOrPurchase', placeBidOnAuctionOrPurchase);
+router.post('/auction/finish', finishAuctionController);
 
 export default router;

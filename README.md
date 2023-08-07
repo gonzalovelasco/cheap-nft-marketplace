@@ -41,15 +41,14 @@ List a new NFT.
 - **Method:** `POST`
 - **Path:** `/api/nft`
 - **Body Parameters:**
-  - `nftData`: Object containing NFT data.
-    - `ownerAddress` (string, required): Address of the NFT owner.
-    - `tokenId` (integer, required): ID of the NFT token.
-    - `name` (string, required): Name of the NFT.
-    - `type` (string, required): Type of the NFT, must be either `'fixed'` or `'auction'`.
-    - `price` (number, optional): Price of the NFT. Required if the type is `'fixed'`.
-    - `auction` (object, optional): Auction details. Required if the type is `'auction'`.
-      - `minimumBid` (number, required): Minimum bid amount for the auction.
-      - `endDate` (string, required): End date of the auction in ISO 8601 format.
+  - `ownerAddress` (string, required): Address of the NFT owner.
+  - `tokenId` (integer, required): ID of the NFT token.
+  - `name` (string, required): Name of the NFT.
+  - `type` (string, required): Type of the NFT, must be either `'fixed'` or `'auction'`.
+  - `price` (number, optional): Price of the NFT. Required if the type is `'fixed'`.
+  - `auction` (object, optional): Auction details. Required if the type is `'auction'`.
+    - `minimumBid` (number, required): Minimum bid amount for the auction.
+    - `endDate` (string, required): End date of the auction in ISO 8601 format.
 
 ### Response
 
@@ -81,3 +80,65 @@ Retrieve a list of public NFTs.
 - **Error Response:**
   - **Status:** 500 Internal Server Error
   - **Body:** `{ error: 'Failed to fetch NFT list.' }`
+
+# Place Bid on Auction or Purchase API Endpoint
+
+This endpoint allows you to place a bid on an ongoing auction or make a purchase for an NFT.
+
+## POST /api/auction/bidOrPurchase
+
+Place a bid on an ongoing auction or make a purchase for an NFT.
+
+### Request
+
+- **Method:** `POST`
+- **Path:** `/api/auction/bidOrPurchase`
+- **Body Parameters:**
+  - `tokenId` (integer, required): ID of the NFT token.
+  - `bidderAddress` (string, required): Address of the bidder.
+  - `bidAmount` (number, required): Amount of the bid.
+
+### Response
+
+- **Success Response:**
+
+  - **Status:** 200 OK
+  - **Body:** `{ message: 'Bid placed on the auction successfully.' }`
+
+- **Error Responses:**
+  - **Status:** 400 Bad Request
+    - **Body:** `{ error: 'Invalid request data.' }`
+    - **Body:** `{ error: 'Invalid bid amount.' }`
+  - **Status:** 404 Not Found
+    - **Body:** `{ error: 'Nft not found.' }`
+  - **Status:** 500 Internal Server Error
+    - **Body:** `{ error: 'Failed to place bid on the auction.' }`
+
+# Finish Auction API Endpoint
+
+This endpoint allows you to finish an ongoing auction for an NFT.
+
+## POST /api/auction/finish
+
+Finish an ongoing auction for an NFT.
+
+### Request
+
+- **Method:** `POST`
+- **Path:** `/api/auction/finish`
+- **Body Parameters:**
+  - `tokenId` (integer, required): ID of the NFT token.
+
+### Response
+
+- **Success Response:**
+
+  - **Status:** 200 OK
+  - **Body:** `{ message: 'Auction finished successfully.' }`
+
+- **Error Responses:**
+  - **Status:** 400 Bad Request
+    - **Body:** `{ error: 'Invalid request data.' }`
+    - **Body:** `{ error: 'No valid bids on the auction.' }`
+  - **Status:** 400 Bad Request
+    - **Body:** `{ error: 'Failed to finish the auction.' }`
