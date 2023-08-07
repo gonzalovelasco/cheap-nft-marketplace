@@ -55,11 +55,13 @@ export async function finishAuctionController(req: Request, res: Response) {
       throw new Error('Invalid request data.');
     }
 
-    const { tokenId } = req.body;
+    const { tokenId, address } = req.body;
     const listings = getNFTs();
     const listing = listings.find((item) => item.tokenId === tokenId);
-
-    if (listing?.type !== 'auction' || !listing?.auction || !listing.auction?.highestBidder) {
+    if (address !== listing?.ownerAddress) {
+      res.status(400).json({ error: 'Only the owner can finish the auction.' });
+      return;
+    }
       res.status(400).json({ error: 'No valid bids on the auction.' });
       return;
     }
